@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"cloud.google.com/go/storage"
@@ -10,10 +10,10 @@ import (
 	"time"
 )
 
-func UploadImageToCloudStorage(w http.ResponseWriter, r *http.Request) {
-
+func ImageUploadHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
+
 	if err != nil {
 		panic(err)
 	}
@@ -26,7 +26,7 @@ func UploadImageToCloudStorage(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	bucketName := "images"
+	bucketName := "idraw-app-images"
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
@@ -44,4 +44,6 @@ func UploadImageToCloudStorage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Blob %v uploaded.\n", objectName)
+
+	w.WriteHeader(200)
 }
