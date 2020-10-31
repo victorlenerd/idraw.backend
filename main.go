@@ -15,7 +15,8 @@ func main() {
 	router.Use(mux.CORSMethodMiddleware(router))
 
 	router.HandleFunc("/", handlers.IndexHandler).Methods(http.MethodGet)
-	router.HandleFunc("/upload", handlers.ImageUploadHandler).Methods(http.MethodPost)
+	router.HandleFunc("/upload/{noteID}", handlers.UploadHandler).Methods(http.MethodPost)
+	router.HandleFunc("/notes/{noteID}", handlers.GetNoteImages).Methods(http.MethodGet)
 
 	port := os.Getenv("PORT")
 
