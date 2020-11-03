@@ -11,7 +11,6 @@ type NoteImage struct {
 	ID          string    `json:"id"`
 	NoteID 		string 	  `json:"note_id"`
 	FileName    string    `json:"file_name"`
-	Time        int       `json:"time"`
 	DateCreated time.Time `json:"date_created"`
 }
 
@@ -22,7 +21,7 @@ func (noteImage *NoteImage) CreateNoteImage(ctx context.Context) error {
 	}
 
 	key := datastore.NameKey("NoteImage", noteImage.ID, nil)
-	_, err = client.Put(ctx, key, &noteImage)
+	_, err = client.Put(ctx, key, noteImage)
 	if err != nil {
 		return err
 	}
@@ -41,7 +40,7 @@ func (noteImage *NoteImage) FindAllByNoteID(ctx context.Context) ([]NoteImage, e
 	query := datastore.NewQuery("NoteImage").
 		Filter("NoteID =", noteImage.NoteID)
 
-	_, err = client.GetAll(ctx, query, &noteImages)
+	_, err = client.GetAll(ctx, query, noteImages)
 	if err != nil {
 		return nil, err
 	}

@@ -33,7 +33,12 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 		fileName := ksuid.New().String()
 
-		services.AddImageToNote(ctx, noteID, file, fileName)
+		err = services.AddImageToNote(ctx, noteID, file, fileName)
+		if err != nil {
+			fmt.Fprint(w, err.Error())
+			w.WriteHeader(500)
+			return
+		}
 
 		fmt.Fprintf(w, "Blob %v uploaded.\n", fileName)
 

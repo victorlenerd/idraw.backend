@@ -31,10 +31,9 @@ func AddImageToNote(ctx context.Context, noteID string, file multipart.File, fil
 	}
 
 	noteImage := models.NoteImage{
-		ID:          "",
+		ID:          ksuid.New().String(),
 		NoteID:      noteID,
 		FileName:    fileName,
-		Time:        0,
 		DateCreated: time.Time{},
 	}
 
