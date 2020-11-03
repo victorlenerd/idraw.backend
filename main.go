@@ -17,6 +17,7 @@ func main() {
 	router.HandleFunc("/", handlers.IndexHandler).Methods(http.MethodGet)
 	router.HandleFunc("/upload/{noteID}", handlers.UploadHandler).Methods(http.MethodPost)
 	router.HandleFunc("/notes/{noteID}", handlers.GetNoteImages).Methods(http.MethodGet)
+	router.HandleFunc("/notes/{noteID}", handlers.CreateNote).Methods(http.MethodPost)
 
 	port := os.Getenv("PORT")
 

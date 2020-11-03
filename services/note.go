@@ -8,20 +8,20 @@ import (
 	"time"
 )
 
-func CreateNote(ctx context.Context) (*models.Note, error) {
-
-	note := &models.Note{
-		ID:  ksuid.New().String(),
-		DateCreated: time.Now(),
+func CreateNote(ctx context.Context, noteID string) (*models.Note, error) {
+	note := models.Note{
+		ID:  noteID,
+		Version: 0,
+		DateCreated: time.Now().UTC(),
 	}
 
-	err := note.Create(ctx)
+	err := note.CreateNote(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return note, nil
+	return &note, nil
 }
 
 func AddImageToNote(ctx context.Context, noteID string, file multipart.File, fileName string) error {
@@ -30,11 +30,34 @@ func AddImageToNote(ctx context.Context, noteID string, file multipart.File, fil
 		return err
 	}
 
+	note := models.Note{
+		ID: noteID,
+	}
+
+	version := 1
+	err = note.GetNote(ctx)
+
+	if err != nil {
+		note.Version = version
+		err = note.CreateNote(ctx)
+		if err != nil {
+			return err
+		}
+	} else {
+		note.Version = note.Version + 1
+		err = note.UpdateNote(ctx)
+		if err != nil {
+			return err
+		}
+		version = note.Version
+	}
+
 	noteImage := models.NoteImage{
 		ID:          ksuid.New().String(),
 		NoteID:      noteID,
 		FileName:    fileName,
-		DateCreated: time.Time{},
+		DateCreated: time.Now().UTC(),
+		Version: version,
 	}
 
 	err = noteImage.CreateNoteImage(ctx)

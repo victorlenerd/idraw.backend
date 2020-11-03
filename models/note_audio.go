@@ -11,8 +11,7 @@ type NoteAudio struct {
 	ID          string    `json:"id"`
 	FileName    string    `json:"file_name"`
 	NoteID      string    `json:"note_id"`
-	StartTime   int       `json:"start_time"`
-	EndTime     int       `json:"end_time"`
+	Version     int       `json:"version"`
 	DateCreated time.Time `json:"date_created"`
 }
 

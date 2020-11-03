@@ -9,7 +9,8 @@ import (
 
 type NoteImage struct {
 	ID          string    `json:"id"`
-	NoteID 		string 	  `json:"note_id"`
+	NoteID      string    `json:"note_id"`
+	Version     int       `json:"version"`
 	FileName    string    `json:"file_name"`
 	DateCreated time.Time `json:"date_created"`
 }

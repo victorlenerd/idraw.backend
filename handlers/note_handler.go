@@ -9,6 +9,27 @@ import (
 	"net/http"
 )
 
+func CreateNote(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	params := mux.Vars(r)
+
+	if noteID, ok := params["noteID"]; !ok {
+		fmt.Fprint(w, "noteID is required parameter")
+		w.WriteHeader(400)
+		return
+	} else {
+
+		_, err := services.CreateNote(ctx, noteID)
+		if err != nil {
+			w.WriteHeader(500)
+			return
+		} else {
+			w.WriteHeader(201)
+			return
+		}
+	}
+}
+
 func GetNoteImages(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	params := mux.Vars(r)
@@ -30,5 +51,4 @@ func GetNoteImages(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(data)
 	}
-
 }
