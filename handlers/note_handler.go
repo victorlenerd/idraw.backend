@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"idraw/services"
+	"log"
 	"net/http"
 )
 
@@ -21,6 +22,7 @@ func CreateNote(w http.ResponseWriter, r *http.Request) {
 
 		_, err := services.CreateNote(ctx, noteID)
 		if err != nil {
+			log.Fatalln(err)
 			w.WriteHeader(500)
 			return
 		} else {
@@ -43,6 +45,7 @@ func GetNoteImages(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			fmt.Fprint(w, err.Error())
+			log.Fatalln(err)
 			w.WriteHeader(500)
 			return
 		}

@@ -7,6 +7,7 @@ import (
 	"github.com/segmentio/ksuid"
 	"idraw/services"
 	"idraw/utils"
+	"log"
 	"net/http"
 	"time"
 )
@@ -24,6 +25,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			fmt.Fprint(w, err.Error())
+			log.Fatalln(err)
 			w.WriteHeader(500)
 			return
 		}
@@ -36,6 +38,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		err = services.AddImageToNote(ctx, noteID, file, fileName)
 		if err != nil {
 			fmt.Fprint(w, err.Error())
+			log.Fatalln(err)
 			w.WriteHeader(500)
 			return
 		}
