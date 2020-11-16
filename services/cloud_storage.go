@@ -7,6 +7,7 @@ import (
 	"idraw/config"
 	"io"
 	"mime/multipart"
+	"strconv"
 )
 
 func UploadToCloudStorage(ctx context.Context, fileName string, file multipart.File) error {
@@ -38,10 +39,14 @@ func GetFileURLFromCloudStorage(ctx context.Context, fileName string) (string, e
 		return "", err
 	}
 
-	attrs, err := client.Bucket(config.ImageBucket).Object(fileName).Attrs(ctx)
+	reader, err := client.Bucket(config.ImageBucket).Object(fileName).NewReader(ctx)
 	if err != nil {
-		return "not-found", nil
+		return "0", nil
 	}
 
-	return attrs.MediaLink, err
+	image := []byte{}
+
+	byteSize, err := reader.Read(image)
+
+	return strconv.Itoa(byteSize), err
 }
