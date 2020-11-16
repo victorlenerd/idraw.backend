@@ -7,7 +7,6 @@ import (
 	"idraw/config"
 	"io"
 	"mime/multipart"
-	"strconv"
 )
 
 func UploadToCloudStorage(ctx context.Context, fileName string, file multipart.File) error {
@@ -15,6 +14,13 @@ func UploadToCloudStorage(ctx context.Context, fileName string, file multipart.F
 
 	if err != nil {
 		return err
+	}
+
+	obj := client.Bucket(config.ImageBucket).Object(fileName)
+
+	err = obj.ACL().Set(ctx, storage.AllUsers, storage.RoleReader)
+	if err != nil {
+		fmt.Errorf("set acl error: %v", err)
 	}
 
 	wc := client.Bucket(config.ImageBucket).Object(fileName).NewWriter(ctx)
@@ -39,14 +45,10 @@ func GetFileURLFromCloudStorage(ctx context.Context, fileName string) (string, e
 		return "", err
 	}
 
-	reader, err := client.Bucket(config.ImageBucket).Object(fileName).NewReader(ctx)
+	attrs, err := client.Bucket(config.ImageBucket).Object(fileName).Attrs(ctx)
 	if err != nil {
-		return "0", nil
+		return err.Error(), nil
 	}
 
-	image := make([]byte, reader.Attrs.Size)
-
-	byteSize, err := reader.Read(image)
-
-	return strconv.Itoa(byteSize), err
+	return attrs.MediaLink, err
 }
