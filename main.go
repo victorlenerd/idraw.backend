@@ -13,7 +13,7 @@ func main() {
 	router := mux.NewRouter()
 
 	router.Use(mux.CORSMethodMiddleware(router))
-	
+
 	router.Use(func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -21,12 +21,13 @@ func main() {
 		})
 	})
 
-	router.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
-
-	router.HandleFunc("/", handlers.IndexHandler).Methods(http.MethodGet)
+	//router.HandleFunc("/", handlers.IndexHandler).Methods(http.MethodGet)
 	router.HandleFunc("/upload/{noteID}", handlers.UploadHandler).Methods(http.MethodPost)
 	router.HandleFunc("/notes/{noteID}", handlers.GetNoteImages).Methods(http.MethodGet)
 	router.HandleFunc("/notes/{noteID}", handlers.CreateNote).Methods(http.MethodPost)
+
+	fileServer := http.FileServer(http.Dir("./public/"))
+	router.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fileServer)).Methods(http.MethodGet)
 
 	port := os.Getenv("PORT")
 
