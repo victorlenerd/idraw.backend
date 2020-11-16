@@ -40,7 +40,7 @@ func GetFileURLFromCloudStorage(ctx context.Context, fileName string) (string, e
 
 	attrs, err := client.Bucket(config.ImageBucket).Object(fileName).Attrs(ctx)
 	if err != nil {
-		return "", err
+		return "not-found", nil
 	}
 
 	return attrs.MediaLink, err
