@@ -69,7 +69,7 @@ func AddImageToNote(ctx context.Context, noteID string, file multipart.File, fil
 	return nil
 }
 
-func GetNoteImages(ctx context.Context, noteID string) ([]string, error) {
+func GetNoteImages(ctx context.Context, noteID string) ([]models.NoteImage, error) {
 	noteImage := &models.NoteImage{
 		NoteID:      noteID,
 	}
@@ -79,17 +79,5 @@ func GetNoteImages(ctx context.Context, noteID string) ([]string, error) {
 		return nil, err
 	}
 
-	imageURLs := make([]string, 0, len(noteImages))
-
-	for _, noteImage := range noteImages {
-		url, err := GetFileURLFromCloudStorage(ctx, noteImage.FileName)
-
-		if err != nil {
-			return nil, err
-		}
-
-		imageURLs = append(imageURLs, url)
-	}
-
-	return imageURLs, nil
+	return noteImages, nil
 }

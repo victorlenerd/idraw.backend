@@ -13,6 +13,13 @@ func main() {
 	router := mux.NewRouter()
 
 	router.Use(mux.CORSMethodMiddleware(router))
+	
+	router.Use(func(handler http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			handler.ServeHTTP(w, req)
+		})
+	})
 
 	router.HandleFunc("/", handlers.IndexHandler).Methods(http.MethodGet)
 	router.HandleFunc("/upload/{noteID}", handlers.UploadHandler).Methods(http.MethodPost)
