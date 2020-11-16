@@ -41,7 +41,7 @@ func (noteImage *NoteImage) FindAllByNoteID(ctx context.Context) ([]NoteImage, e
 	query := datastore.NewQuery("NoteImage").
 		Filter("NoteID =", noteImage.NoteID)
 
-	_, err = client.GetAll(ctx, query, noteImages)
+	_, err = client.GetAll(ctx, query, &noteImages)
 	if err != nil {
 		return nil, err
 	}
