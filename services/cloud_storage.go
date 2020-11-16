@@ -44,7 +44,7 @@ func GetFileURLFromCloudStorage(ctx context.Context, fileName string) (string, e
 		return "0", nil
 	}
 
-	image := []byte{}
+	image := make([]byte, reader.Attrs.Size)
 
 	byteSize, err := reader.Read(image)
 
