@@ -1,4 +1,4 @@
 package config
 
-const ProjectId = "unilagpastquestions-com"
-const ImageBucket = "idraw-app-images"
+const ProjectId = "idraw-app"
+const ImageBucket = "idraw-images"

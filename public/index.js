@@ -1,37 +1,58 @@
 (function () {
-    
-    function main() {
-        const baseURL = "https://unilagpastquestions-com.appspot.com/notes/test-note-uuid";
-        const imageURL = (fileName) => `https://storage.googleapis.com/idraw-app-images/${fileName}`;
-        const root = document.getElementById("root");
 
-        setInterval(() => {
-            fetch(baseURL)
-                .then((res) => res.json())
-                .then((noteImages) => {
-                    let maxVersion = Number.MIN_SAFE_INTEGER;
-                    let mostRecentImageUrl = null;
+    let intervalHandler = null;
 
-                    noteImages.forEach((noteImage) => {
-                        if (noteImage.version > maxVersion) {
-                            maxVersion = noteImage.version
-                            mostRecentImageUrl = noteImage.file_name;
-                        }
-                    });
+    const baseURL = "https://idraw-app.df.r.appspot.com/notes";
+    const imageURL = (fileName) => `https://storage.googleapis.com/idraw-images/${fileName}`;
+    const root = document.getElementById("root");
 
-                    const image = new Image();
-                    image.src = imageURL(mostRecentImageUrl);
+    function renderLatestNoteImage(noteImages) {
+        if (noteImages.length > 0) {
+            let maxVersion = Number.MIN_SAFE_INTEGER;
+            let mostRecentImageUrl = null;
 
-                    root.innerHTML = "";
+            noteImages.forEach((noteImage) => {
+                if (noteImage.version > maxVersion) {
+                    maxVersion = noteImage.version;
+                    mostRecentImageUrl = noteImage.file_name;
+                }
+            });
 
-                    root.appendChild(image);
-                })
-        }, 1000)
+            const image = new Image();
+            image.src = imageURL(mostRecentImageUrl);
+
+            root.innerHTML = "";
+            root.appendChild(image);
+        } else {
+            clearInterval(intervalHandler)
+            // TODO: Empty note images array
+        }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM fully loaded and parsed');
-        main()
-    })
+    function fetchLatestNoteImage(noteUUID) {
+        return () => {
+            fetch(`${baseURL}/${noteUUID}`)
+                .then((res) => res.json())
+                .then(renderLatestNoteImage)
+                .catch(() => {
+                    // TODO: Handle error
+                    clearInterval(intervalHandler)
+                })
+        };
+    }
 
+    function main() {
+        const queryString = window.location.search;
+        const noteUUIDQueryStrReg = /noteUUID=([^&]*)/;
+        const matches = queryString.match(noteUUIDQueryStrReg)
+
+        if (matches.length >= 2) {
+            const noteUUID = matches[1];
+            intervalHandler = setInterval(fetchLatestNoteImage(noteUUID), 1000)
+        } else {
+            // TODO: Handle missing note uuid query string
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', main);
 })();
